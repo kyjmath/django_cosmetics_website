@@ -1,7 +1,6 @@
-<프로젝트를 적용하는 방법>
+프로젝트에 관해 더 자세히 보고 싶으면 project.pptx를 확인하세요.
 
-프로젝트에 관해 더 자세히 보고 싶으면 project
-
+<장고 프로젝트를 적용하는 방법>
 1. 테이블 생성.docx 안에있는 생성코드로 테이블 4개를 생성한다.
 
 2. excel_to_db.py 코드를 이용해서 cosmetics_data.xlsx 안의 데이터를 cosmetics 테이블 안으로 넣는다.
@@ -17,8 +16,7 @@
 
 
 app : 1. cosmetics (주요앱)
-        2. loginapp (로그인 기능 담당)
-
+      2. loginapp (로그인 기능 담당)
 html 총 8개
 css 총 4개
 js 총 5개
