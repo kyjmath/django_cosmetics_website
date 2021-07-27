@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+
+<head>
+    <!-- Metas -->
+    <meta charset="UTF-8" />
+    <meta name="author" content="data_artists" />
+
+	<!-- CSS 불러오기 -->
+    <link href="/static/css/plugin.css" rel="stylesheet" />
+    <link href="/static/css/perfect-scrollbar.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet" />
+    <link href="/static/css/dashboard.css" rel="stylesheet" />
+    
+    <!-- favicon -->
+    <link rel="shortcut icon" href="/static/images/favicon.ico" />
+    
+    <!-- Document Title -->
+    <title>데이터 수정</title>
+</head>
+
+
+<body>
+    <div class="page-wrapper">
+        <!-- Wrapper 시작 -->
+        <div class="dash-content-wrap">
+            <!-- header 시작 -->
+            <header class="db-top-header">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col-md-9 col-sm-6 col-4">
+                            <div class="site-navbar-wrap v2 style2">
+                                <div class="site-navbar">
+                                    <nav class="site-navigation">
+                                        <div class="container">
+                                            <ul class="site-menu js-clone-nav d-none d-lg-block">
+                                                <li class="has-children">
+                                                    <a href="/home">홈으로</a>
+                                                </li>                  
+                                                <li class="has-children">
+                                                    <a href="/list">화장품 목록</a>
+                                                </li>
+                                                <li class="has-children">
+                                               		<a href="/comment">코멘트 게시판</a>
+                                            	</li>  
+                                            </ul>
+                                        </div>
+                                    </nav>
+                                    <div class="d-lg-none sm-right">
+                                        <a href="#" class="mobile-bar js-menu-toggle">
+                                            <span class="lnr lnr-menu"></span>
+                                        </a>
+                                    </div>       
+                                </div>
+                            </div>
+                        </div>
+                        {% if user.is_authenticated %}
+                        <div class="col-md-3 col-sm-6 col-8">
+                     		<div class="menu-btn"> 
+                       			<img src="/static/images/favicon.ico" alt="...">
+                                <span>{{ user.username }}님 환영합니다</span>&nbsp;&nbsp;
+                                <a href="/logout"><button class="btn v2">로그아웃</button></a>
+                     		</div>
+                  		</div>
+                        {% else %}
+                        {% endif %}
+                    </div>
+                </div>
+            </header>
+            <!-- header 끝 -->
+            <!-- content 시작 -->
+            <div class="dash-content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="db-add-list-wrap">           
+                                <div class="act-title">
+                                    <h5>데이터 수정</h5>
+                                </div>
+                                <form action="/data_modify_save" name=cos_data method="get">
+                                   <div class="db-add-listing">
+                                       <div class="row">
+                                          <input name="no" type="hidden" value="{{data.no}}">
+                                           <div class="col-md-3">
+                                               <div class="form-group">
+                                                   <label>브랜드</label>
+                                                   <input name="brand" id="brand" type="text" value="{{data.brand}}" title="브랜드" readonly class="form-control filter-input">
+                                               </div>
+                                           </div>
+                                           <div class="col-md-4">
+                                               <div class="form-group">
+                                                   <label>제품명</label>
+                                                   <input name="product" id="product" type="text" value="{{data.product}}" title="제품명" readonly class="form-control filter-input">
+                                               </div>
+                                           </div>
+                                           <div class="col-md-5">
+                                               <div class="form-group">
+                                                   <label>타입(스킨/토너, 로션/에멀전, 크림, 세럼, 에센스, 마스크팩)</label>
+                                                   <input name="type" id="type" type="text" value="{{data.type}}" title="타입"  class="form-control filter-input">
+                                               </div>
+                                           </div>
+                                           <div class="col-md-4">
+                                              <div class="form-group">
+                                                  <label>효과(수분, 보습, 주름개선, 탄력, 미백, 진정)</label>
+                                                  <input name="effect" id="effect" type="text" value="{{data.effect}}" title="효과"  class="form-control filter-input">
+                                               </div>
+                                           </div>
+                                           <div class="col-md-4">
+                                              <div class="form-group">
+                                                  <label>제품 성분</label>
+                                                  <input name="ingredient" id="ingredient" type="text" value="{{data.ingredient}}"  title="제품 성분"  class="form-control filter-input">
+                                               </div>
+                                           </div>
+                                           <div class="col-md-4">
+                                              <div class="form-group">
+                                                  <label>가격</label>
+                                                  <input name="price" id="price" type="number" value="{{data.price}}" title="가격"  class="form-control filter-input">
+                                               </div>
+                                           </div>
+                                           <div class="col-md-3">
+                                               <div class="form-group">
+                                                   <label>평점(2.5, 3, 3.5, 4, 4.5, 5)</label>
+                                                   <input name="grade" id="grade" min="2.5" max="5" step="0.5" type="number" title="평점" value="{{data.grade}}" class="form-control filter-input">
+                                               </div>
+                                           </div>
+                                           <div class="col-md-2">
+                                              <div class="form-group">
+                                                  <label>성별</label>
+                                                  <input name="gender" type="text" value="{{data.gender}}" class="form-control filter-input">
+                          
+                                               </div>
+                                           </div>
+                                           <div class="col-md-3">
+                                              <div class="form-group">
+                                                  <label>연령대(10,20,30,40,50)</label>
+                                                  <input name="age" id="age" type="text"  value="{{data.age}}" title="연령대" class="form-control filter-input">
+                                               </div>
+                                           </div>
+                                           <div class="col-md-4">
+                                              <div class="form-group">
+                                                  <label>피부 타입(건성, 지성, 복합성, 민감성, 모든피부=1)</label>
+                                                  <input name="skin_type" id="skin_type" type="text" value="{{data.skin_type}}" title="피부 타입" class="form-control filter-input">
+                                               </div>
+                                           </div>
+                                           <div class="col-md-12">
+                                              <div class="form-group">
+                                                  <label>제품 이미지 링크</label>
+                                                  <input name="pro_image" value="{{data.pro_image}}" title="제품 이미지 링크" class="form-control filter-input">
+                                               </div>
+                                           </div>
+                                           <div class="col-md-12">
+                                              <div class="trending-right float-right">
+                                                 <button type="button" id="save" class="btn btn-outline-primary">저장</button>
+                                                 <a href="javascript:history.back()"><button class="btn btn-outline-primary">뒤로가기</button></a>
+                                              </div>   
+                                           </div>
+                                       </div>
+                                   </div>
+                               </form>
+                            </div>     
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- content 끝 -->
+            <!-- footer 시작 -->
+            <div class="dash-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="copyright">
+                                <p>© 코덕이골라줌 2021. All rights reserved.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- footer 끝 -->
+        </div>
+        <!-- Wrapper 끝 -->
+    </div>
+    
+    <!-- JS 블러오기 -->
+    <script src="/static/js/plugin.js"></script>
+    <script src="/static/js/perfect-scrollbar.min.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/dashboard.js"></script>
+</body>
+
+</html>
+

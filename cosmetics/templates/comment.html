@@ -1,0 +1,337 @@
+{% load cosmetics_tags %}
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+
+<head>
+    <!-- Metas -->
+    <meta charset="UTF-8" />
+    <meta name="author" content="data_artists" />
+
+	<!-- CSS 불러오기 -->
+    <link href="/static/css/plugin.css" rel="stylesheet" />
+    <link href="/static/css/perfect-scrollbar.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet" />
+    <link href="/static/css/dashboard.css" rel="stylesheet" />
+    
+    <!-- favicon -->
+    <link rel="shortcut icon" href="/static/images/favicon.ico" />
+    
+    <!-- Document Title -->
+    <title>코멘트 게시판</title>
+</head>
+
+<body>
+	<!-- 로딩 동적아이콘 -->
+    <div class="preloader js-preloader">
+        <img src="/static/images/preloader.gif" alt="...">
+    </div>
+    
+    <!-- Wrapper 시작 -->
+    <div class="page-wrapper">
+    	<!-- header 시작 -->
+        <header class="header transparent scroll-hide">
+            <!-- header 상단바 시작 -->
+            <div class="header-top-section">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-sm-8 col-12">
+                            <div class="header-top-left">
+                                <ul>
+                                    <li><i class="fa fa-phone"></i> <a href="tel:4444356348">+82-010-1234-5678</a></li>
+                                    <li><i class="fa fa-envelope"></i><a href="mailto:kyjmath@naver.com">data.artist6@gmail.com</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        {% if user.is_authenticated %}
+						<div class="col-sm-4 col-12">
+							<div class="menu-btn"> 
+								<img src="/static/images/favicon.ico" alt="...">
+                                <span>{{ user.username }}님 환영합니다</span>&nbsp;&nbsp;
+                                <a href="/logout"><button class="btn v2">로그아웃</button></a>
+							</div>
+						</div>
+                        {% else %}
+                        <div class="col-sm-4 col-12">
+                            <div class="menu-btn">     
+                            	<a href="#" data-toggle="modal" data-target="#user-login-popup"><i class="lnr lnr-user">로그인</i></a>            
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!-- header 상단바 끝 -->
+            <!-- header 메뉴바 시작 -->
+            <div class="site-navbar-wrap v2">
+                <div class="container">
+                    <div class="site-navbar">
+                        <div class="row align-items-center">
+                            <div class="col-lg-2 col-md-6 col-7">
+                                <a class="navbar-brand" href="/home"><img src="/static/images/logo.png" alt="logo" class="img-fluid"></a>
+                            </div>
+                            <div class="col-lg-6 col-md-1 col-1  order-2 order-lg-1 pl-xs-0">
+                                <nav class="site-navigation text-right">
+                                    <div class="container">
+                                        <ul class="site-menu js-clone-nav d-none d-lg-block">
+                                            <li class="has-children">
+                                                <a href="/home">홈으로</a>
+                                            </li>
+                                            <li class="has-children">
+                                                <a href="/list">화장품 목록</a>
+                                            </li>
+                                            <li class="has-children">
+                                                <a class="active" href="/comment">코멘트 게시판</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </nav>
+                            </div>
+                            {% if user.is_authenticated %}
+                        	<div class="col-lg-4 col-md-5 col-4 order-1 order-lg-2 text-right pr-xs-0">
+                                <div class="menu-btn">
+                                    <div class="add-list">
+                                        {% if user.username == "dataartist" %}
+                                    	<a class="btn v1" href="/admin_manage">admin전용 데이터 관리하러가기</a>
+                                    	{% else %}
+                                        <a class="btn v1" href="/cart?id={{user.username}}">찜목록 보기</a>
+                                    	{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% else %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- header 메뉴바 끝 -->
+        </header>
+        <!-- header 끝 -->
+        <!-- 내용 시작 -->
+        <div class="dash-content-wrap">          
+            <!-- 코멘트 게시판 시작 -->
+            <div class="dash-content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="dash-review-wrap">
+                            	<a href="javascript:history.back()"><button type='button' class = "btn v2">뒤로가기</button></a>
+	                            <div class="act-title">
+	                            	<form action='/comment' method="GET">       	
+	                               		<span>어떤 상품의 코멘트를 찾으시나요?</span> 
+	                                	<input class="hero__input-holders" type="text" name="product" placeholder="제품명">
+	                                	<button class="btn v3" type="submit">찾아보기</button>
+	                                </form>
+	                            </div>
+	                            <div class="db-review-item-wrap">
+	                            	<!-- 코멘트 시작 -->
+	                            	{% for c in comment %}
+	                                <div class="single-review-item">
+	                                    <div class="customer-review_wrap">
+	                                        <div class="reviewer-img">
+	                                            <img src="{{c.cos_num.pro_image}}" class="img-fluid" alt="...">
+	                                        </div>
+	                                        <div class="customer-content-wrap">
+	                                            <div class="customer-content">
+	                                                <div class="customer-review">
+	                                                    <h6>{{c.cos_num.product}}</h6>
+	                                                    <p>{{c.client_user.id}}</p><br>
+	                                                    <p class="comment-date">{{c.date}}</p>
+	                                                </div>
+	                                            </div>
+	                                            <p class="customer-text">{{c.content}}</p>
+	                                            {% if user.username == 'dataartist' %}
+	                                            <div class="like-btn">
+                                                	<a href="/deletecomment?no={{c.no}}" class="rate-review float-right">
+                                                    	<button class="btn btn-outline-primary" name="admin_deletebutton">관리자 권한삭제</button>
+                                                    </a>
+                                                </div>
+                                                {% else %}
+                                                	{% if user.username == c.client_user.id %}
+                                                    <div class="like-btn">
+                                                    	<a href="/deletecomment?no={{c.no}}"  class="rate-review float-right">
+                                                        	<button class="btn btn-outline-primary" name="user_deletebutton">삭제</button>
+                                                        </a>
+                                                    </div>
+		                                            {% else %}
+		                                            <div class="like-btn">작성자만 삭제 가능</div>
+		                                            {% endif %}
+		                                    	{% endif %}
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            	{% endfor %}
+	                            	<!-- 코멘트 끝 -->
+	                            	<!-- 페이징 시작 -->
+	                                <tr>
+	        							<td colspan="5" style="text-align: center;">
+	                             			<div class="pagination justify-content-center">
+		                             			{% if comment.has_previous %}
+			                             		<a href="?{% param_replace page=1 %}"><button type="button" class = "btn v9">&laquo;&nbsp;처음</button></a>&nbsp;    
+		                             			<a href="?{% param_replace page=data.previous_page_number %}"><button type="button" class = "btn v1">이전</button></a>&nbsp;
+		                             			{% endif %}
+		                             			{% if comment.has_next %}
+			                             		<a href="?{% param_replace page=data.next_page_number %}"><button type="button" class = "btn v1">다음</button></a>&nbsp;   
+					                            <a href="?{% param_replace page=data.paginator.num_pages %}"><button type="button" class = "btn v9">끝&nbsp;&nbsp;&nbsp;&raquo;</button></a>
+					                            {% endif %}
+				                            </div>
+	                             			<br>
+	                             			<p style="text-align: center;">( 페이지 {{comment.number}} / {{comment.paginator.num_pages}} )</p>
+	                             		</td>
+	                         		</tr>
+	                         		<!-- 페이징 끝 -->
+	                            </div>
+	                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 코멘트 게시판 끝 -->
+        </div>
+        <!-- 내용 끝 -->
+    </div>
+    <!-- Wrapper 끝 -->
+    <!-- Footer 시작 -->
+    <div class="footer-wrapper v1" style="padding:0">
+        <div class="footer-bottom-area">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-xs-3" style="float: none; margin:0 auto;">
+                  		<img src="/static/images/logo.png" alt="logo">
+                    </div>
+                    <div class="container row" style="float: none; margin:100 auto;">
+                    	<div class="col-xs-5" style="float: none; margin:0 auto;">  
+                             <div class="contact-info">
+                                 <div class="icon">
+                                     <i class="fa fa-map-marker-alt"></i>
+                               </div>
+                               <div class="text">대한민국 South Korea &nbsp;</div>
+                               <div class="icon">
+                                     <i class="fas fa-envelope"></i>
+                               </div>
+                               <div class="text">data.artists6@gmail.com &nbsp;</div> 
+                               <div class="icon">
+                                   <i class="fas fa-phone-alt"></i>
+                               </div>
+                               <div class="text">+82-010-1234-5678</div>
+                           </div>
+                       </div>
+                    </div>
+                    <div class="col-md-8 offset-md-2">  
+                        <p>
+                            ©코덕이골라줌 2021. All rights reserved. 
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer 끝 -->
+    <!-- 로그인 시작 -->
+    <div class="modal fade" id="user-login-popup">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="lnr lnr-cross"></i></span></button>
+                </div>
+                {% if user.is_authenticated %}
+				<form id="logoutForm" action="/logout" method="post" class="navbar-right">{% csrf_token %}
+	    			<ul class="nav navbar-nav navbar-right">
+		        		<li><span class="navbar-brand">Hello {{ user.username }}!</span></li>
+		        		<li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+	   				</ul>
+				</form>
+				{% else %}
+                <div class="modal-body">
+                    <!-- 유저 로그인 시작 -->
+                    <div class="user-login-section">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <ul class="ui-list nav nav-tabs mb-30" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-toggle="tab" href="#login" role="tab" aria-selected="true">로그인</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-toggle="tab" href="#register" role="tab" aria-selected="false">회원가입</a>
+                                        </li>
+                                    </ul>
+                                    <div class="login-wrapper">
+                                        <div class="ui-dash tab-content">
+                                        	<!-- 로그인 -->
+                                            <div class="tab-pane fade show active" id="login" role="tabpanel">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <form id="login-form" action="login/auth" method="post" name = "login">
+                                                            <div class="form-group">
+                                                                <input type="text" name="id" id="id" tabindex="1" class="form-control" placeholder="아이디" value="" required="">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="비밀번호">
+                                                            </div>
+                                                            <div class="res-box text-center mt-30">
+                                                                <button type="button" class="btn v8" id ="loginbutton">로그인</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="signup-wrapper">
+                                                            <img src="/static/images/logo-square.png" alt="...">        
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- 회원가입 -->
+                                            <div class="tab-pane fade" id="register" role="tabpanel">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <form id="register-form" action="signup" method="post" name="signup">
+                                                            <div class="form-group">
+                                                                <input type="text" name="user_name" id="user_name" tabindex="1" class="form-control" placeholder="성함" value="">
+                                                            </div>    
+                                                            <div class="form-group">
+                                                                <input type="text" name="user_id" id="user_id" tabindex="1" class="form-control" placeholder="아이디 6자 이상" value="" >
+                                                                <button type="button" id = "id-check" class = "btn v2">아이디 중복확인</button> 
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <input type="password" name="user_password" id="user_password" tabindex="2" class="form-control" placeholder="비밀번호 6자 이상">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <input type="password" name="confirm_password" id="confirm_password" tabindex="2" class="form-control" placeholder="비밀번호 확인">
+                                                            </div>
+                                                            <div class="res-box text-center mt-30">
+                                                                <button type="button" id="signup" class="btn v8">회원가입 하기</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="signup-wrapper">
+                                                            <img src="/static/images/logo-square.png" alt="...">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 유저 로그인 끝 -->
+                </div>
+            </div>
+            {% endif %} 
+        </div>
+    </div>
+    <!-- 로그인 끝 --> 
+    
+    
+    <!-- JS 불러오기 -->
+    <script src="/static/js/plugin.js"></script>
+    <script src="/static/js/perfect-scrollbar.min.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/dashboard.js"></script>
+    <script src="/static/js/login.js"></script>
+</body>
+
+</html>

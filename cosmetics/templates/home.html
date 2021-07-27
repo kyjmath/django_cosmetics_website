@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+
+<head>
+    <!-- Metas -->
+    <meta charset="UTF-8" />
+    <meta name="author" content="data_artists" />
+    
+    <!-- CSS 불러오기 -->
+	<link rel="stylesheet" href="/static/css/plugin.css">
+	<link rel="stylesheet" href="/static/css/style.css">
+    
+    <!-- favicon -->
+    <link rel="shortcut icon" href="/static/images/favicon.ico" />
+    
+    <!-- 사이트 제목 -->
+    <title>코덕이골라줌</title>
+</head>
+
+<body>
+    <!-- 로딩 동적아이콘 -->
+    <div class="preloader js-preloader">
+        <img src="/static/images/preloader.gif" alt="...">
+    </div>
+    
+    <!-- Wrapper 시작 -->
+    <div class="page-wrapper">
+        <!-- header 시작 -->
+        <header class="header transparent scroll-hide">
+            <!-- header 상단바 시작 -->
+            <div class="header-top-section">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-sm-8 col-12">
+                            <div class="header-top-left">
+                                <ul>
+                                    <li><i class="fa fa-phone"></i><a href="tel:4444356348">+82-010-1234-5678</a></li>
+                                    <li><i class="fa fa-envelope"></i><a href="mailto:kyjmath@naver.com">data.artists6@gmail.com</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        {% if user.is_authenticated %}
+						<div class="col-sm-4 col-12">
+							<div class="menu-btn"> 
+								<img src="/static/images/favicon.ico" alt="...">
+                                <span>{{user.username}}님 환영합니다</span>&nbsp;&nbsp;
+                                <a href="/logout"><button class="btn v2">로그아웃</button></a>
+							</div>
+						</div>
+                        {% else %}
+                        <div class="col-sm-4 col-12">
+                            <div class="menu-btn">     
+                            	<a href="#" data-toggle="modal" data-target="#user-login-popup"><i class="lnr lnr-user">로그인</i></a>            
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!-- header 상단바 끝 -->
+            <!-- header 메뉴바 시작 -->
+            <div class="site-navbar-wrap v2">
+                <div class="container">
+                    <div class="site-navbar">
+                        <div class="row align-items-center">
+                            <div class="col-lg-2 col-md-6 col-7">
+                                <a class="navbar-brand" href="/home"><img src="/static/images/logo.png" alt="logo" class="img-fluid"></a>
+                            </div>
+                            <div class="col-lg-6 col-md-1 col-1  order-2 order-lg-1 pl-xs-0">
+                                <nav class="site-navigation text-right">
+                                    <div class="container">
+                                        <ul class="site-menu js-clone-nav d-none d-lg-block">
+                                            <li class="has-children">
+                                                <a class="active" href="/home">홈으로</a>
+                                            </li>                                      
+                                            <li class="has-children">
+                                                <a href="/list">화장품 목록</a>
+                                            </li>
+                                            <li class="has-children">
+                                                <a href="/comment">코멘트 게시판</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </nav>
+                            </div>
+                            {% if user.is_authenticated %}
+                        	<div class="col-lg-4 col-md-5 col-4 order-1 order-lg-2 text-right pr-xs-0">
+                                <div class="menu-btn">
+                                    <div class="add-list">
+                                    	{% if user.username == "dataartist" %}
+                                    	<a class="btn v1" href="/admin_manage">admin전용 데이터 관리하러가기</a>
+                                    	{% else %}
+                                        <a class="btn v1" href="/cart?id={{user.username}}">찜목록 보기</a>
+                                    	{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% else %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- header 메뉴바 끝 -->
+        </header>
+        <!-- header 끝 -->
+        <!-- body 상단 시작 -->
+        <div class="hero v2 section-padding" style="background-image: url(/static/images/header/back.jpg)">
+            <div class="overlay op-2"></div>
+            <!-- 필터 시작 -->
+            <div class="container pos-abs">
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <div class="header-text v1">
+                            <img src="/static/images/title.png" alt="...">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <form action='/list' id="select_frm" class="hero__form v2 filter listing-filter bg-cb" method="GET">
+                            <div class="row">
+                                 <div class="col-xl-3 col-lg-6 col-sm-12">
+                                    <select name="type" class="hero__form-input form-control custom-select" multiple title="화장품 종류 (다중선택)">
+                                        <option>스킨/토너</option>
+                                        <option>크림</option>
+                                        <option>마스크팩</option>
+                                        <option>로션/에멀전</option>
+                                        <option>세럼</option>
+                                        <option>에센스</option>
+                                    </select>
+                                </div>          
+                                <div class="col-xl-3 col-lg-6 col-sm-12 pl-0">
+                                    <select name="effect" class="hero__form-input form-control custom-select" multiple title="효과 (다중선택)">
+                                        <option>진정</option>
+                                        <option>미백</option>
+                                        <option>탄력</option>
+                                        <option>수분</option>
+                                        <option>주름개선</option>
+                                        <option>보습</option>
+                                    </select>
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-sm-12 pl-0">
+									<select name="gen" class="hero__form-input form-control custom-select" multiple title="성별 (다중선택)">
+                                        <option>남</option>
+                                        <option>여</option>
+                                    </select>
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-sm-12 pl-0">
+                                    <div class="submit_btn">
+                                        <button class="btn v3" type="submit">찾아보기</button>
+                                    </div>
+                                    {% if user.is_authenticated %}
+                                    <div class="dropdown-filter"><span>세부 필터</span></div>
+                                    {% else %}
+                                    &nbsp;<a href="#" data-toggle="modal" data-target="#user-login-popup"><b>세부 필터 이용하기</b></a>
+                                    {% endif %}
+                                </div>
+                                <div class="explore__form-checkbox-list full-filter">
+                                    <div class="row">
+                                    	<div class="col-lg-6 col-md-6 col-sm-12 py-1 pr-30">
+                                            <div class="filter-checkbox">
+                                                <p>연령대</p>
+                                                <ul>
+                                                    <li>
+                                                        <input name="age" id="check-age10" type="checkbox" value="10">
+                                                        <label for="check-age10">10대</label>
+                                                    </li>
+                                                    <li>
+                                                        <input name="age" id="check-age20" type="checkbox" value="20">
+                                                        <label for="check-age20">20대</label>
+                                                    </li>
+                                                    <li>
+                                                        <input name="age" id="check-age30" type="checkbox" value="30">
+                                                        <label for="check-age30">30대</label>
+                                                    </li>
+                                                    <li>
+                                                        <input name="age" id="check-age40" type="checkbox" value="40">
+                                                        <label for="check-age40">40대</label>
+                                                    </li>
+                                                    <li>
+                                                        <input name="age" id="check-age50" type="checkbox" value="50">
+                                                        <label for="check-age50">50대</label>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12 py-3 pr-30">
+                                            <div class="filter-sub-area style1">
+                                                <div class="filter-title mb-10">
+                                                    <p>가격 : <span><input type="text" id="amount_two" name="price"></span></p>
+                                                </div>
+                                                <div id="price" class="price-range mb-30">
+                                                </div>
+                                            </div>
+                                        </div>
+                                       
+										<div class="col-lg-6 col-md-6 col-sm-12 py-1 pr-30">
+                                            <div class="filter-checkbox">
+                                                <p>피부타입</p>
+                                                <ul>
+                                                	<li>
+                                                        <input id="check-type1" type="checkbox" name="skin_type" value="1">
+                                                        <label for="check-type1">모든피부</label>
+                                                    </li>
+                                                    <li>
+                                                        <input id="check-type2" type="checkbox" name="skin_type" value="건성">
+                                                        <label for="check-type2">건성</label>
+                                                    </li>
+                                                    <li>
+                                                        <input id="check-type3" type="checkbox" name="skin_type" value="복합성"> 
+                                                        <label for="check-type3">복합성</label>
+                                                    </li>
+                                                    <li>
+                                                        <input id="check-type4" type="checkbox" name="skin_type" value="민감성">
+                                                        <label for="check-type4">민감성</label>
+                                                    </li>
+                                                    <li>
+                                                        <input id="check-type5" type="checkbox" name="skin_type" value="지성">
+                                                        <label for="check-type5">지성</label>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12 py-1 pr-30">
+                                            <div class="filter-checkbox">
+                                                <p>별점</p>
+                                                <div>
+                                                    <input id="check-star5" type="checkbox" name="grade" value="5">
+                                                    <label for="check-star5">
+                                                    </label>
+                                                    <div class="list-ratings">
+                                                        <span class="fas fa-star"></span>
+                                                        <span class="fas fa-star"></span>
+                                                        <span class="fas fa-star"></span>
+                                                        <span class="fas fa-star"></span>
+                                                        <span class="fas fa-star"></span>                                   
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <input id="check-star4" type="checkbox" name="grade" value="4">
+                                                    <label for="check-star4">
+                                                    </label>
+                                                    <div class="list-ratings">
+                                                        <span class="fas fa-star"></span>
+                                                        <span class="fas fa-star"></span>
+                                                        <span class="fas fa-star"></span>
+                                                        <span class="fas fa-star"></span>                                                    
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <input id="check-star3" type="checkbox" name="grade" value="3">
+                                                    <label for="check-star3">
+                                                    </label>
+                                                    <div class="list-ratings">
+                                                        <span class="fas fa-star"></span>
+                                                        <span class="fas fa-star"></span>
+                                                        <span class="fas fa-star"></span>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <input id="check-star2" type="checkbox" name="grade" value="2">
+                                                    <label for="check-star2">
+                                                    </label>
+                                                    <div class="list-ratings">
+                                                        <span class="fas fa-star"></span>
+                                                        <span class="fas fa-star"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- 필터 끝 -->
+        </div>
+        <!-- body 상단 끝 -->
+        <!-- body 하단 시작-->
+        <div class="container pt-130">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="section-title v1">
+                        <p>"코덕이 골라줌"에 오신걸 환영합니다</p>
+                        <h1>피부관리의 시작을 코덕과 함께하세요!</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 설명칸 시작 -->
+        <div class="promo-section mt-50 v2">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-5 col-lg-12">
+                        <div class="promo-desc">
+                            <div class="section-title v2">
+                                <p>코덕과 함께 만들어가는 "피부 자신감"</p>
+                                <br>
+                                <h2>스킨케어 스트레스는 이제 그만!</h2>
+                            </div>
+                            <div class="promo-text">
+                                <p>코덕이 수집한 데이터에서 당신의 피부타입에 맞는 화장품을 골라보세요.</p>
+                                <p>몰라서 아무거나 대충 썼다면? 코덕만 따라와!</p>
+                                <p>코덕이 당신의 피부를 케어해줄 다양한 스킨케어 제품들을 준비했어요!</p>
+                                <br>
+                                <p><b>내가 쓰는 화장품, 내가 고르고 직접 사자!</b></p>
+                                <p>기초부터 피부 타입까지! 내가 원하는대로 선택해 내 피부에 가장 알맞은 기초 제품들을 찾아가세요 :)</p>
+                            </div>
+                            <div class="row pt-5">
+                                <div class="col-sm-4 col-12">
+                                    <div class="counter-text v2">
+                                        <i class="lnr lnr-apartment"></i>
+                                        <h6 class="counter-value" data-from="0" data-to="{{products}}" data-speed="1500">
+                                        </h6>
+                                        <p>화장품 데이터 수</p>
+                                    </div> 
+                                </div>                      
+                                <div class="col-sm-4 col-12">
+                                    <div class="counter-text v2">
+                                        <i class="lnr lnr-user"></i>
+                                        <h6 class="counter-value" data-from="0" data-to="{{clients}}" data-speed="1500">
+                                        </h6>
+                                        <p>회원 수</p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4 col-12">
+                                    <div class="counter-text v2">
+                                        <i class="lnr lnr-thumbs-up"></i>
+                                        <h6 class="counter-value" data-from="0" data-to="{{baskets}}" data-speed="1000">
+                                        </h6>
+                                        <p>회원들이 찜한 수</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-7 col-lg-12">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="promo-content-wrap">
+                                    <div class="promo-content">
+                                        <img src="/static/images/category/brand.png" alt="...">
+                                        <h4>코덕만의 브랜드 STORY</h4>
+                                        <p>코덕이 왜 여러분에게 스킨케어 제품으로 다가갔는지 함께 알아가요</p>
+                                    </div>
+                                    <div class="promo-content">
+                                        <img src="/static/images/category/event.png" alt="...">
+                                        <h4>★이벤트 당첨자 후기★</h4>
+                                        <p>코덕이 준비한 이벤트 당첨자의 후기를 함께 공유해요!</p>
+                                        <p>다양한 선물이 준비되어 있어요.</p>
+                                    </div>
+                                    <div class="promo-content">
+                                        <img src="/static/images/category/pick.png" alt="...">
+                                        <h4>코덕's PICK!</h4>
+                                        <p>코덕이 선택한 피부타입별 스킨케어 제품을 확인해보세요!</p>
+                                    </div>
+                                    <div class="promo-content">
+                                        <img src="/static/images/category/SNS.png" alt="...">
+                                        <h4>코덕's SNS</h4>
+                                        <p>코덕을 방문했던 고객님들의 이야기가 담겨있어요! 여러분의 이야기도 코덕 SNS에서 알려주세요.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 설명칸 끝 -->
+
+        <!-- 팀 구성 시작 -->
+        <div class="team-section mt-130 pb-100">
+            <div class="container">
+                <div class="row mt-30">
+                    <div class="col-md-8 offset-md-2 text-center">
+                        <div class="section-title v1">
+                            <p>언제든지 고객을 기다리고 있습니다</p>
+                            <h2>우리 팀원들을 만나보세요</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="team-wrapper swiper-container">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                    <div class="single-team-member v2">
+                                        <img src="/static/images/agents/KangYoungJin.jpg" alt="Image">
+                                        <div class="single-team-info">
+                                            <h4>강영진</h4>
+                                            <span>Team Leader</span>
+                                            <div class="contact-info">
+                                                <div class="icon">
+                                                    <i class="fas fa-envelope"></i>
+                                                </div>
+                                                <div class="text"><a href="tel:44078767595">kyjmath@naver.com</a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+                                    <div class="single-team-member v2">
+                                        <img src="/static/images/agents/KimSungWoo.jpg" alt="Image">
+                                        <div class="single-team-info">
+                                            <h4>김성우</h4>
+                                            <span>Programmer</span>
+                                            <div class="contact-info">
+                                                <div class="icon">
+                                                    <i class="fas fa-envelope"></i>
+                                                </div>
+                                                <div class="text"><a href="tel:44078767595">po0041@khu.ac.kr</a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+                                    <div class="single-team-member v2">
+                                        <img src="/static/images/agents/shineunju.jpg" alt="Image">
+                                        <div class="single-team-info">
+                                            <h4>신은주</h4>
+                                            <span>Programmer</span>
+                                            <div class="contact-info">
+                                                <div class="icon">
+                                                    <i class="fas fa-envelope"></i>
+                                                </div>
+                                                <div class="text"><a href="tel:44055847538">ssej1020@naver.com</a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+                                    <div class="single-team-member v2">
+                                        <img src="/static/images/agents/ChoiHwiRyang.jpg" alt="Image">
+                                        <div class="single-team-info">
+                                            <h4>최휘량</h4>
+                                            <span>Programmer</span>
+                                            <div class="contact-info">
+                                                <div class="icon">
+                                                    <i class="fas fa-envelope"></i>
+                                                </div>
+                                                <div class="text"><a href="tel:44055847538">hwiryang96@gmail.com</a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+                                    <div class="single-team-member v2">
+                                        <img src="/static/images/agents/NaHyeRim.jpg" alt="Image">
+                                        <div class="single-team-info">
+                                            <h4>나혜림</h4>
+                                            <span>Programmer</span>
+                                            <div class="contact-info">
+                                                <div class="icon">
+                                                    <i class="fas fa-envelope"></i>
+                                                </div>
+                                                <div class="text"><a href="tel:44321445 678">app324@naver.com</a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+                                    <div class="single-team-member v2">
+                                        <img src="/static/images/agents/KimYooHyuk.png" alt="Image">
+                                        <div class="single-team-info">
+                                            <h4>김유혁</h4>
+                                            <span>Programmer</span>
+                                            <div class="contact-info">
+                                                <div class="icon">
+                                                    <i class="fas fa-envelope"></i>
+                                                </div>
+                                                <div class="text"><a href="tel:44321445 678">thomas9610@gmail.com</a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slider-btn v2 team_next"><i class="lnr lnr-arrow-right"></i></div>
+                            <div class="slider-btn v2 team_prev"><i class="lnr lnr-arrow-left"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 팀 구성 끝 -->
+        <!-- Scroll to top starts-->
+        <span class="scrolltotop"><i class="lnr lnr-arrow-up"></i></span>
+        <!-- Scroll to top ends-->
+    </div>
+    <!-- Wrapper 끝 -->
+
+	<!-- Footer 시작 -->
+    <div class="footer-wrapper v1" style="padding:0">
+        <div class="footer-bottom-area">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-xs-3" style="float: none; margin:0 auto;">
+                  		<img src="/static/images/logo.png" alt="logo">
+                    </div>
+                    <div class="container row" style="float: none; margin:100 auto;">
+                    <div class="col-xs-5" style="float: none; margin:0 auto;">  
+                             <div class="contact-info">
+                                 <div class="icon">
+                                     <i class="fa fa-map-marker-alt"></i>
+                               </div>
+                               <div class="text">대한민국 South Korea &nbsp;</div>
+                               <div class="icon">
+                                     <i class="fas fa-envelope"></i>
+                               </div>
+                               <div class="text">data.artists6@gmail.com &nbsp;</div> 
+                               <div class="icon">
+                                   <i class="fas fa-phone-alt"></i>
+                               </div>
+                               <div class="text">+82-010-1234-5678</div>
+                           </div>
+                       </div>
+                       </div>
+                    <div class="col-md-8 offset-md-2">  
+                        <p>
+                            ©코덕이골라줌 2021. All rights reserved. 
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer 끝 -->
+    <!-- 로그인 시작 -->
+    <div class="modal fade" id="user-login-popup">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="lnr lnr-cross"></i></span></button>
+                </div>
+                {% if user.is_authenticated %}
+				<form id="logoutForm" action="/logout" method="post" class="navbar-right">{% csrf_token %}
+	    			<ul class="nav navbar-nav navbar-right">
+		        		<li><span class="navbar-brand">Hello {{ user.username }}!</span></li>
+		        		<li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+	   				</ul>
+				</form>
+				{% else %}
+                <div class="modal-body">
+                    <!-- 유저 로그인 시작 -->
+                    <div class="user-login-section">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <ul class="ui-list nav nav-tabs mb-30" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-toggle="tab" href="#login" role="tab" aria-selected="true">로그인</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-toggle="tab" href="#register" role="tab" aria-selected="false">회원가입</a>
+                                        </li>
+                                    </ul>
+                                    <div class="login-wrapper">
+                                        <div class="ui-dash tab-content">
+                                        	<!-- 로그인 -->
+                                            <div class="tab-pane fade show active" id="login" role="tabpanel">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <form id="login-form" action="login/auth" method="post" name = "login">
+                                                            <div class="form-group">
+                                                                <input type="text" name="id" id="id" tabindex="1" class="form-control" placeholder="아이디" value="" required="">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="비밀번호">
+                                                            </div>
+                                                            <div class="res-box text-center mt-30">
+                                                                <button type="button" class="btn v8" id ="loginbutton">로그인</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="signup-wrapper">
+                                                            <img src="/static/images/logo-square.png" alt="...">        
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- 회원가입 -->
+                                            <div class="tab-pane fade" id="register" role="tabpanel">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <form id="register-form" action="signup" method="post" name="signup">
+                                                            <div class="form-group">
+                                                                <input type="text" name="user_name" id="user_name" tabindex="1" class="form-control" placeholder="성함" value="">
+                                                            </div>     
+                                                            <div class="form-group">
+                                                                <input type="text" name="user_id" id="user_id" tabindex="1" class="form-control" placeholder="아이디 6자 이상" value="" >
+                                                                <button type="button" id = "id-check" class = "btn v2">아이디 중복확인</button>                                         
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <input type="password" name="user_password" id="user_password" tabindex="2" class="form-control" placeholder="비밀번호 6자 이상">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <input type="password" name="confirm_password" id="confirm_password" tabindex="2" class="form-control" placeholder="비밀번호 확인">
+                                                            </div>
+                                                            <div class="res-box text-center mt-30">
+                                                                <button type="button" id="signup" class="btn v8" >회원가입 하기</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="signup-wrapper">
+                                                            <img src="/static/images/logo-square.png" alt="...">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 유저 로그인 끝 -->
+                </div>
+            </div>
+            {% endif %} 
+        </div>
+    </div>
+    <!-- 로그인 끝 -->
+
+	<!-- JS 불러오기 -->
+    <script src="/static/js/plugin.js"></script>
+    <script src="/static/js/main.js"></script>
+	<script src="/static/js/login.js"></script>
+
+
+</body>
+
+</html>
